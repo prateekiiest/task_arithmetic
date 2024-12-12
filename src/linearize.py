@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 from functorch import jvp, make_functional_with_buffers
 
-from src.modeling import ImageEncoder
-from src.utils import DotDict
+from modeling import ImageEncoder
+from utils import DotDict
 
 
 class LinearizedModel(nn.Module):
@@ -64,6 +64,83 @@ class LinearizedModel(nn.Module):
 
 class LinearizedImageEncoder(abc.ABC, nn.Module):
     """Creates a linearized version of an image encoder."""
+
+    def __init__(
+        self, args=None, keep_lang=False, image_encoder=None, init_encoder=None
+    ):
+        super().__init__()
+        if image_encoder is None:
+            image_encoder = ImageEncoder(args, keep_lang)
+        if init_encoder is None:
+            init_encoder = image_encoder
+
+        # Copy the attributes from the image encoder.
+        self.train_preprocess = image_encoder.train_preprocess
+        self.val_preprocess = image_encoder.val_preprocess
+        self.cache_dir = image_encoder.cache_dir
+
+        self._model_name = self._get_name(args.model)
+        self.model = LinearizedModel(init_model=init_encoder, model=image_encoder)
+
+    def _get_name(self, model_name):
+        if "__pretrained__" in model_name:
+            model_name, _ = model_name.split("__pretrained__", "")
+        return model_name
+
+    def forward(self, x):
+        # use the taylorized version of the model.
+        return self.model(x)
+
+    def __call__(self, x):
+        return self.forward(x)
+
+    def save(self, filename):
+        """Saves the linearized image encoder.
+
+        We save the model name in the state dict so that we can load the
+        correct model when loading the linearized image encoder. Directly using
+        torch.save would not work becuse func0 is not serializable.
+
+        Args:
+            filename (str): The path to save the taylorized image encoder.
+        """
+        if os.path.dirname(filename) != "":
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+        state_dict = self.state_dict()
+        state_dict["model_name"] = self._model_name
+
+        torch.save(state_dict, filename)
+
+    @classmethod
+    def load(cls, filename):
+        """Loads a linearized image encoder.
+
+        It first loads the state dict with the model name and then creates the
+        correct model and loads the state dict.
+
+        Args:
+            filename (str): The path to the taylorized image encoder.
+
+        Returns:
+            LinearizedImageEncoder: The loaded taylorized image encoder.
+        """
+        print(f"Loading image encoder from {filename}")
+        state_dict = torch.load(filename, map_location="cpu")
+
+        # ImageEncoder expects a DotDict
+        args = DotDict({"model": state_dict["model_name"]})
+        taylorized_encoder = cls(args)
+
+        # Remove the model name from the state dict so that we can load the
+        # model.
+        state_dict.pop("model_name")
+        taylorized_encoder.load_state_dict(state_dict)
+        return taylorized_encoder
+
+
+class LinearizedLanguageModel(abc.ABC, nn.Module):
+    """Creates a linearized version of an language model."""
 
     def __init__(
         self, args=None, keep_lang=False, image_encoder=None, init_encoder=None

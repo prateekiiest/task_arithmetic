@@ -1,0 +1,34 @@
+{
+  "os": "Linux-5.4.0-146-generic-x86_64-with-glibc2.31",
+  "python": "3.12.2",
+  "startedAt": "2024-12-11T09:39:51.876498Z",
+  "args": [
+    "-f",
+    "/tmp/kernel-d7ddf554-ebc2-443c-ae08-ff7f1ee55af5.json"
+  ],
+  "program": "<python with no main file>",
+  "git": {
+    "remote": "https://github.com/prateekiiest/task_arithmetic.git",
+    "commit": "0aa0e1869d8b4b111fa92f2217b8ae863c084fc6"
+  },
+  "email": "zeusisgreat@outlook.com",
+  "root": "/home/agrawal/task_arithmetic/src",
+  "host": "lionssrv3",
+  "username": "agrawal",
+  "executable": "/home/agrawal/anaconda3/envs/kan/bin/python",
+  "cpu_count": 128,
+  "cpu_count_logical": 256,
+  "disk": {
+    "/": {
+      "total": "1887374536704",
+      "used": "1730988515328"
+    }
+  },
+  "memory": {
+    "total": "1081999503360"
+  },
+  "cpu": {
+    "count": 128,
+    "countLogical": 256
+  }
+}

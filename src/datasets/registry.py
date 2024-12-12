@@ -6,18 +6,19 @@ import copy
 
 from torch.utils.data.dataset import random_split
 
-from src.datasets.cars import Cars
-from src.datasets.cifar10 import CIFAR10
-from src.datasets.cifar100 import CIFAR100
-from src.datasets.dtd import DTD
-from src.datasets.eurosat import EuroSAT, EuroSATVal
-from src.datasets.gtsrb import GTSRB
-from src.datasets.imagenet import ImageNet
-from src.datasets.mnist import MNIST
-from src.datasets.resisc45 import RESISC45
-from src.datasets.stl10 import STL10
-from src.datasets.svhn import SVHN
-from src.datasets.sun397 import SUN397
+from datasets.cars import Cars
+from datasets.cifar10 import CIFAR10
+from datasets.cifar100 import CIFAR100
+from datasets.dtd import DTD
+from datasets.eurosat import EuroSAT, EuroSATVal
+from datasets.gtsrb import GTSRB
+from datasets.imagenet import ImageNet
+from datasets.mnist import MNIST
+from datasets.resisc45 import RESISC45
+from datasets.stl10 import STL10
+from datasets.svhn import SVHN
+from datasets.sun397 import SUN397
+from datasets.cnn import CNN
 
 registry = {
     name: obj for name, obj in inspect.getmembers(sys.modules[__name__], inspect.isclass)
@@ -97,4 +98,17 @@ def get_dataset(dataset_name, preprocess, location, batch_size=128, num_workers=
     dataset = dataset_class(
         preprocess, location=location, batch_size=batch_size, num_workers=num_workers
     )
+    return dataset
+
+def get_lm_dataset(dataset_name, tokenizer, location, batch_size=128, num_workers=16, val_fraction=0.1, max_val_samples=5000):
+    if dataset_name.endswith('Val'):
+        # Handle val splits
+        registry = {"CNN"}
+        assert dataset_name in registry, "Unsupported Dataset"
+        
+        if dataset_name == "CNN":
+            dataset = CNN(tokenizer)
+        else:
+            raise NotImplementedError
+            
     return dataset

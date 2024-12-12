@@ -2,7 +2,7 @@ import abc
 
 import torch
 
-from src.linearize import LinearizedImageEncoder
+from linearize import LinearizedImageEncoder
 
 
 class _TaskVector(abc.ABC):

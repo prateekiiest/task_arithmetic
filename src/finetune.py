@@ -3,15 +3,15 @@ import time
 
 import torch
 
-from src.args import parse_arguments
-from src.datasets.common import get_dataloader, maybe_dictionarize
-from src.datasets.registry import get_dataset
-from src.distributed import cleanup_ddp, distribute_loader, is_main_process, setup_ddp
-from src.eval import eval_single_dataset
-from src.heads import get_classification_head
-from src.linearize import LinearizedImageEncoder
-from src.modeling import ImageClassifier, ImageEncoder
-from src.utils import LabelSmoothing, cosine_lr
+from args import parse_arguments
+from datasets.common import get_dataloader, maybe_dictionarize
+from datasets.registry import get_dataset
+from distributed import cleanup_ddp, distribute_loader, is_main_process, setup_ddp
+from eval import eval_single_dataset
+from heads import get_classification_head
+from linearize import LinearizedImageEncoder
+from modeling import ImageClassifier, ImageEncoder
+from utils import LabelSmoothing, cosine_lr
 
 
 def finetune(rank, args):
@@ -194,24 +194,28 @@ def finetune(rank, args):
 
 if __name__ == "__main__":
     train_datasets = [
-        "Cars",
-        "DTD",
-        "EuroSAT",
-        "GTSRB",
+        #"Cars",
+        #"DTD",
+        #"EuroSAT",
+        #"GTSRB",
         "MNIST",
-        "RESISC45",
-        "SUN397",
-        "SVHN",
+        "CIFAR10",
+        "CIFAR100",
+        #"RESISC45",
+        #"SUN397",
+        #"SVHN",
     ]
     epochs = {
-        "Cars": 35,
-        "DTD": 76,
-        "EuroSAT": 12,
-        "GTSRB": 11,
-        "MNIST": 5,
-        "RESISC45": 15,
-        "SUN397": 14,
-        "SVHN": 4,
+        #"Cars": 35,
+        #"DTD": 76,
+        #"EuroSAT": 12,
+        #"GTSRB": 11,
+        "MNIST": 1,
+        "CIFAR10": 1,
+        "CIFAR100": 1,
+        #"RESISC45": 15,
+        #"SUN397": 14,
+        #"SVHN": 4,
     }
 
     for dataset in train_datasets:

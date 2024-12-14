@@ -1,0 +1,5 @@
+- Figure out the datasets to use for LMs (GSM8k Sentiment Analysis, Machine Translation ,etc, ...)
+- Figure out model to use (BERT, LLAMA, etc.)
+- Decide on Pre-processing functions to use (Use model tokenizer for all datasets)
+- Implement LoRA/PEFT finetuning for Language Models
+- Make a Language Model class in modelling.py (linearize and all can be called later)
